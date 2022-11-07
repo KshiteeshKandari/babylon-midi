@@ -1,6 +1,14 @@
 //https://editor.p5js.org/howshekilledit/sketches/P00w6cEmL
 let piano_init = false;
 
+let notes = ['C','D','E','F','G','A','B'];
+
+let noteColor = {bg: '#5C1D6B', obj1: "#000000" , obj2: "#FFFFFF"};
+
+let key1 = {};
+let key2 = {};
+
+
 //default function plays note on keypress
 
 function triggerNote(note, midi = true) {
@@ -15,6 +23,10 @@ function triggerNote(note, midi = true) {
     document.getElementById('txt').innerText = note.name + note.octave;
 
     synth.triggerAttack(note.name + note.octave);
+
+    key1[note.name].position.x += PI/2;
+    key2[note.name].position.x -= PI/2;
+    
 
 
 
@@ -74,7 +86,7 @@ function keyReleased() {
 function setup() {
     noLoop();
     //color background white
-    scene.clearColor = new BABYLON.Color3.FromHexString('#ffffff');
+    scene.clearColor = new BABYLON.Color3.FromHexString(noteColor.bg);
 
     //initialize camera
     var camera = new BABYLON.ArcRotateCamera("Camera", 3 * Math.PI / 2, Math.PI / 4, 100, BABYLON.Vector3.Zero(), scene);
@@ -83,6 +95,13 @@ function setup() {
     //initialize light
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 1;
+
+    for (let [i,n] of notes.entries()){
+        key1[n] = createBox(0,5,i-5,8);
+        key2[n] = createBox(0,-5,i-10,8);
+        key1[n].material = hexMat(noteColor.obj1);
+        key2[n].material = hexMat(noteColor.obj2);
+    }
 
 
     synth = new Tone.PolySynth(Tone.MonoSynth, {
